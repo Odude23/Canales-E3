@@ -8,6 +8,18 @@
                 font-weight: bold;
                 color: blue;
             }
+            .error
+            {
+                color: red;
+            }
+            .hidden 
+            { 
+                visibility: hidden; 
+            }
+            .unhidden 
+            {
+                visibility: visible;
+            }
         </style>
     </head>
     
@@ -19,15 +31,18 @@
             <form class="border border-primary p-3">
                 <div class="form-group">
                     <label for="jobDesc">Job Description</label>
-                    <input type="text" class="form-control" id="jobDesc" name="jobDesc" placeholder="Job description">
+                    <input type="text" class="form-control jobData" id="jobDesc" name="jobDesc" placeholder="Job description">
                 </div>
                 <div class="form-group">
                     <label for="sqFt">Sq Ft</label>
-                    <input type="number" class="form-control" id="sqFt" name="sqFt" placeholder="Total square feet to be painted">
+                    <input type="number" class="form-control jobData" id="sqFt" name="sqFt" placeholder="Total square feet to be painted">
                 </div>
                 <button id='btnSubmit' type="button" class="btn btn-primary float-right">Add Job</button>
                 <div class="clearfix"></div>
             </form>  
+            
+            <!--error checking-->
+            <p class="hidden error" id="error">Please enter a description and number of square feet.</p>
             
             <!--list group-->
             <div class='p-2 bg-dark'>
@@ -54,17 +69,25 @@
             function initializeModel()
             {
                 model.jobs = [];
+                model.error = false;
             }
             
             // view...
             function updateView()
             {
-                $('#jobs').empty();                
+                $('.error').removeClass("unhidden");
+                if (model.error == true)
+                {
+                    $('.error').removeClass("hidden");
+                    $('.error').addClass("unhidden");
+                }
+                
+                $('#jobList').empty();                
                 for (var i in model.jobs) 
                 {
                     let item = $("<li></li>");
                     item.addClass("list-group-item");
-                    item.html("<span class='bold'>Description:</span> " + model.jobs[i].desc + " <span class='bold'>Square Feet:</span> " + model.jobs[i].sqFt);
+                    item.html("<span class='bold'>Description:</span> " + model.jobs[i].desc + " <span class='bold'>Square Feet:</span> " + model.jobs[i].sqFt + " <span class='bold'>Cost: </span> " + Math.ceil(model.jobs[i].sqFt/100)*10);
                     $('#jobList').append(item);
                 }
             }            
@@ -74,8 +97,22 @@
             {
                 let desc = $('#jobDesc').val().trim();
                 let sqFeet = $('#sqFt').val().trim();
-                model.jobs.push({ desc: desc, sqFt: sqFeet});
-                updateView();
+                let cost = Math.ceil(sqFeet/100)*10;
+                
+                if (desc == "")
+                {
+                   model.error = true;
+                }
+                else if (sqFeet == "")
+                {
+                   model.error = true;
+                }
+                else
+                {
+                    model.error = false;
+                    model.jobs.push({ desc: desc, sqFt: sqFeet, cost: cost});
+                    updateView();
+                }
             });
             
             // run...
