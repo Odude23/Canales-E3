@@ -81,6 +81,11 @@
                     $('.error').removeClass("hidden");
                     $('.error').addClass("unhidden");
                 }
+                else
+                {
+                    $('.error').removeClass("unhidden");
+                    $('.error').addClass("hidden");
+                }
                 
                 $('#jobList').empty();                
                 for (var i in model.jobs) 
@@ -102,10 +107,12 @@
                 if (desc == "")
                 {
                    model.error = true;
+                   updateView();
                 }
                 else if (sqFeet == "")
                 {
                    model.error = true;
+                   updateView();
                 }
                 else
                 {
